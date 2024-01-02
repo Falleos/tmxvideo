@@ -1,17 +1,20 @@
 <?php
 
   /*******************************************************\
- *                  TMX Video Plugin                       *
+ *                    TMX Video Plugin                     *
  ***********************************************************
  *                        Features                         *
  * - Adds a chatcommand connected to the new TMX video	   *
  *   system.                                               *
  * - /video                                                *
  * - /videos                                               *
+ * - /gps                                                  *
  ***********************************************************
- *                    Created by malun22                   *
+ *                   Created by malun22                    *
+ *                   Modified by falleos                   *
  ***********************************************************
- *              Dependencies: None                         *
+ *                      Dependencies                       *
+ *                       cacert.pem                        *
  ***********************************************************
  *                         License                         *
  * LICENSE: This program is free software: you can         *
@@ -30,13 +33,13 @@
  * Public License along with this program.  If not,        *
  * see <http://www.gnu.org/licenses/>.                     *
  ***********************************************************
- *                       Installation                      *
- * - Put this plugin in /XASECO/plugins				       *
- * - Activate the plugin in XASECO/plugins.xml             *
+ *                      Installation                       *
+ * - Place the plugin in the /xaseco/plugins directory     *
+ * - Add the plugin to the /xaseco/plugins.xml file        *
  * - Download cacert.pem from                              *
  *   https://curl.se/docs/caextract.html and place it in   *
- *   the XASECO root folder                                *
- \*********************************************************/
+ *   the /xaseco directory                                 *
+  \*******************************************************/
 
 global $TMXV;
 
@@ -45,6 +48,7 @@ Aseco::registerEvent('onNewChallenge','tmxv_onNewTrack');
 
 Aseco::addChatCommand('videos','Sets up the tmx videos command environment');
 Aseco::addChatCommand('video','Gives latest video in chat');
+Aseco::addChatCommand('gps','Gives latest video in chat');
 
 function tmxv_onStartup($aseco) {
 	global $TMXV;
@@ -64,6 +68,11 @@ function chat_videos($aseco, $command) {
 }
 
 function chat_video($aseco, $command) {
+    global $TMXV;
+    $TMXV->onVideoCommand($command);
+}
+
+function chat_gps($aseco, $command) {
     global $TMXV;
     $TMXV->onVideoCommand($command);
 }
@@ -147,6 +156,7 @@ class TMXV {
                         'Gives the oldest video in chat');
         $help[] = array();
         $help[] = array('{#black}/videos', '', 'Gives all videos in a window');
+        $help[] = array('{#black}/gps', '', 'Same as "/video"');
         $help[] = array();
 		
         // display ManiaLink message
