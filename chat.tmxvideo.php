@@ -92,7 +92,7 @@ class TMXV {
         if ($this->hasVideos()) {
             $this->showVideosManialink($player);
         } else {
-            $this->msgPlayer($login, '{#warning}No videos found for this track.');
+            $this->msgPlayer($login, 'No GPS videos found for this track.');
         }
     }
 
@@ -114,7 +114,7 @@ class TMXV {
             if ($this->hasVideos()) {
                 $this->sendVideoInChat($login, $this->videos[0]['LinkId'], $this->videos[0]['Title']);
             } else {
-                $this->msgPlayer($login, '{#warning}No videos found for this track.');
+                $this->msgPlayer($login, 'No GPS videos found for this track.');
             }
         } elseif ($command['params'][0] == 'help') {
             // Show help manialink
@@ -123,16 +123,22 @@ class TMXV {
             if ($this->hasVideos()) {
                 $this->sendVideoInChat($login, $this->videos[0]['LinkId'], $this->videos[0]['Title']);
             } else {
-                $this->msgPlayer($login, '{#warning}No videos found for this track.');
+                $this->msgPlayer($login, 'No GPS videos found for this track.');
             }
         } elseif ($command['params'][0] == 'oldest') {
             if ($this->hasVideos()) {
                 $this->sendVideoInChat($login, $this->videos[count($this->videos)-1]['LinkId'], $this->videos[count($this->videos)-1]['Title']);
             } else {
-                $this->msgPlayer($login, '{#warning}No videos found for this track.');
+                $this->msgPlayer($login, 'No GPS videos found for this track.');
             }
+        } elseif ($command['params'][0] == 'list') {
+            if ($this->hasVideos()) {
+                $this->showVideosManialink($player);
+            } else {
+                $this->msgPlayer($login, 'No GPS videos found for this track.');
+        	}
         } else {
-            $this->msgPlayer($login, '{#warning}Unknown command, use /videos help for more information.');
+            $this->msgPlayer($login, 'Unknown command, use /gps help for more information.');
         }
     }
 
@@ -145,18 +151,20 @@ class TMXV {
     }
 
     private function showHelpManialink($login) {
-        $header = '{#black}/video$g will give the latest video in chat:';
+        $header = '{#black}/gps$g will give the latest video in chat:';
 
         $help = array();
-        $help[] = array('...', '{#black}help',
-                        'Shows this help window');
+        $help[] = array('...', '{#black}list',
+                        'Gives all videos in a window');
         $help[] = array('...', '{#black}latest',
                         'Gives the latest video in chat');
         $help[] = array('...', '{#black}oldest',
                         'Gives the oldest video in chat');
+	$help[] = array('...', '{#black}help',
+                        'Shows this help window');
         $help[] = array();
-        $help[] = array('{#black}/videos', '', 'Gives all videos in a window');
-        $help[] = array('{#black}/gps', '', 'Same as "/video"');
+        $help[] = array('{#black}/videos', '', 'Same as /gps list');
+        $help[] = array('{#black}/video', '', 'Same as /gps');
         $help[] = array();
 		
         // display ManiaLink message
