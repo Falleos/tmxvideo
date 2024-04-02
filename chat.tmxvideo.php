@@ -112,7 +112,7 @@ class TMXV {
 
         if ($command['params'][0] == '') {
             if ($this->hasVideos()) {
-                $this->sendVideoInChat($login, $this->videos[0]['LinkId'], $this->videos[0]['Title']);
+                $this->sendVideoToPlayer($login, $this->videos[0]['LinkId'], $this->videos[0]['Title']);
             } else {
                 $this->msgPlayer($login, 'No GPS videos found for this track.');
             }
@@ -121,13 +121,13 @@ class TMXV {
             $this->showHelpManialink($login);
         } elseif ($command['params'][0] == 'latest') {
             if ($this->hasVideos()) {
-                $this->sendVideoInChat($login, $this->videos[0]['LinkId'], $this->videos[0]['Title']);
+                $this->sendVideoToPlayer($login, $this->videos[0]['LinkId'], $this->videos[0]['Title']);
             } else {
                 $this->msgPlayer($login, 'No GPS videos found for this track.');
             }
         } elseif ($command['params'][0] == 'oldest') {
             if ($this->hasVideos()) {
-                $this->sendVideoInChat($login, $this->videos[count($this->videos)-1]['LinkId'], $this->videos[count($this->videos)-1]['Title']);
+                $this->sendVideoToPlayer($login, $this->videos[count($this->videos)-1]['LinkId'], $this->videos[count($this->videos)-1]['Title']);
             } else {
                 $this->msgPlayer($login, 'No GPS videos found for this track.');
             }
@@ -137,6 +137,12 @@ class TMXV {
             } else {
                 $this->msgPlayer($login, 'No GPS videos found for this track.');
         	}
+        } elseif ($command['params'][0] == 'all') {
+        	if ($this->hasVideos()) {
+        		$this->sendVideoToChat($player, $this->videos[count($this->videos)-1]['LinkId'], $this->videos[count($this->videos)-1]['Title']);
+        	} else {
+        		$this->msgPlayer($login, 'No GPS videos found for this track.');
+        	}
         } else {
             $this->msgPlayer($login, 'Unknown command, use /gps help for more information.');
         }
@@ -145,9 +151,13 @@ class TMXV {
     private function saveVideoTitle($title) {
         return str_replace('$', '$$', $title);
     }
+    
+    private function sendVideoToChat($player, $videoId, $videoTitle) {
+        $this->msgAll($player->nickname . ' $z$s$fffrequested a GPS link: $0bf$l[' . $this->buildLink($videoId) . ']' . $this->saveVideoTitle($videoTitle) . '$l');
+    }
 
-    private function sendVideoInChat($login, $videoId, $videoTitle) {
-        $this->msgPlayer($login, 'Watch $l[' . $this->buildLink($videoId) . ']' . $this->saveVideoTitle($videoTitle) . '$l{#server} on YouTube.');
+    private function sendVideoToPlayer($login, $videoId, $videoTitle) {
+        $this->msgPlayer($login, '$fffWatch $0bf$l[' . $this->buildLink($videoId) . ']' . $this->saveVideoTitle($videoTitle) . '$l{#server} $fffon YouTube.');
     }
 
     private function showHelpManialink($login) {
@@ -160,7 +170,9 @@ class TMXV {
                         'Gives the latest video in chat');
         $help[] = array('...', '{#black}oldest',
                         'Gives the oldest video in chat');
-	$help[] = array('...', '{#black}help',
+        $help[] = array('...', '{#black}all',
+                        'Gives the latest video in chat for all players');
+        $help[] = array('...', '{#black}help',
                         'Shows this help window');
         $help[] = array();
         $help[] = array('{#black}/videos', '', 'Same as /gps list');
@@ -250,7 +262,7 @@ class TMXV {
 	private function msgAll($msg) {
 		global $aseco;
 
-		$aseco->client->query('ChatSendServerMessage', $aseco->formatColors('{#server}> ' . $msg));
+		$aseco->client->query('ChatSendServerMessage', $aseco->formatColors('{#server}>> ' . $msg));
 	}
 
 	private function msgConsole($msg) {
